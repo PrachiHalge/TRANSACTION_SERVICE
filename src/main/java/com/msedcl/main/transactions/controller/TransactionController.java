@@ -3,6 +3,7 @@ package com.msedcl.main.transactions.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msedcl.main.transactions.common.ApiResponse;
+import com.msedcl.main.transactions.dto.TransactionContactsDTO;
 import com.msedcl.main.transactions.dto.TransactionRequestDto;
 import com.msedcl.main.transactions.dto.TransactionResponseDto;
 import com.msedcl.main.transactions.service.TransactionService;
@@ -22,7 +24,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@AllArgsConstructor
+
 @RestController
 @Slf4j
 @Validated
@@ -30,9 +32,29 @@ import lombok.extern.slf4j.Slf4j;
 public class TransactionController {
 
 	private TransactionService transactionService;
+	private TransactionContactsDTO tansactionContactsDTO;
+	
 	private static final String TRANSACTION_DEPOSIT="deposit";
-	private static final String TRANSACTION_WITHDRAW="withdraw";
+	private static final String TRANSACTION_WITHDRAW="withdraw";	
 
+	public TransactionController(TransactionService transactionService, TransactionContactsDTO tansactionContactsDTO) {
+		super();
+		this.transactionService = transactionService;
+		this.tansactionContactsDTO = tansactionContactsDTO;
+	}
+
+	@Value("${build.version}")
+	private String buidVersion;
+	
+	@GetMapping("build-version")
+	public ResponseEntity<String> printBuildVersion(){
+		return ResponseEntity.status(HttpStatus.OK).body(buidVersion);
+	}
+	
+	@GetMapping("contact-details")
+	public ResponseEntity<TransactionContactsDTO> printContactDetails(){
+		return ResponseEntity.status(HttpStatus.OK).body(tansactionContactsDTO);
+	}
 	@PostMapping("transactions/transaction/deposit")
 	public ResponseEntity<ApiResponse<TransactionResponseDto>> createDepositTrasaction(
 			@RequestBody @Valid TransactionRequestDto transactionRequestDto) {

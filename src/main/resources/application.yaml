@@ -1,0 +1,35 @@
+#spring.application.name=04-TransactionsService
+#
+#spring.datasource.username=root
+#spring.datasource.password=root123
+#spring.datasource.url=jdbc:mysql://localhost:3306/transactions_db
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+#
+#logging.file.name=logs/accounts.log
+#
+#server.port=8082
+spring:
+    application:
+      name: "transaction-service"
+    datasource:
+      username: root
+      password: root123
+      url: jdbc:mysql://localhost:3306/transactions_db
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 8082
+logging:
+  file:
+    name: logs/transactions.log 
+#Custom properties -Used in application
+build:
+    version: "1.0.3"
+transactions:
+    message: "Welcome to MSEDCL Bank Transactions REST API"
+    contactDetails:
+      name: "John"
+      email: "john@yopmail.com"
+    onCallSupport:
+       - 123456890
+       - 852149632
