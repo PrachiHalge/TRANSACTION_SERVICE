@@ -17,13 +17,13 @@ import com.msedcl.main.transactions.exception.AccountNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-@Component
+//@Component
 @AllArgsConstructor
 public class AccountRESTClient {
 	private final RestTemplate restTemplate;
 	
 	public AccountResponseDto getAccountByAccountId(Integer accountId) {
-		String url="http://localhost:8081/accountapi/accounts/account/"+accountId;
+		String url="http://ACCOUNT-SERVICE/accountapi/accounts/account/"+accountId;
 		try {
 		ResponseEntity<ApiResponse<AccountResponseDto>> response= 
 				restTemplate.exchange(

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.msedcl.main.transactions.client.AccountFeignClient;
 import com.msedcl.main.transactions.client.AccountRESTClient;
 import com.msedcl.main.transactions.dto.AccountResponseDto;
 import com.msedcl.main.transactions.dto.BalanceUpdateRequestDto;
@@ -23,7 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TransactionServiceImpl implements TransactionService {
 	private TransactionRepository  transactionRepository;
-	private final AccountRESTClient accountRESTClient;
+	//private final AccountRESTClient accountRESTClient;
+	private final AccountFeignClient accountFeignClient;
+	
 	private static final String TRANSACTION_DEPOSIT="deposit";
 	private static final String TRANSACTION_WITHDRAW="withdraw";
 	
@@ -31,8 +34,9 @@ public class TransactionServiceImpl implements TransactionService {
 	public TransactionResponseDto createTransaction(TransactionRequestDto transactionRequestDto,String transactionType) {
 		log.info("TransactionService-createNewTransaction");
 		log.info("Fetch Account from account id from Account service");
-		AccountResponseDto accountResponseDto = accountRESTClient
-				.getAccountByAccountId(transactionRequestDto.getAccountId());
+		//AccountResponseDto accountResponseDto = accountRESTClient
+		//		.getAccountByAccountId(transactionRequestDto.getAccountId());
+		AccountResponseDto accountResponseDto = accountFeignClient.getAccountsListByAccountId(transactionRequestDto.getAccountId()).getBody().getData();
 		log.info("Account Details fetched from account service are: " + accountResponseDto.toString());
 		
 		//save transaction
@@ -56,7 +60,9 @@ public class TransactionServiceImpl implements TransactionService {
 		balanceUpdateRequestDto.setAmount(transactionRequestDto.getTransactionAmount());
 		balanceUpdateRequestDto.setTransactionType(transactionType);
 		log.info("Calling AccountService,to Update balance");
-		accountResponseDto=accountRESTClient.updateBalance(balanceUpdateRequestDto);
+		//accountResponseDto=accountRESTClient.updateBalance(balanceUpdateRequestDto);
+		accountResponseDto = accountFeignClient.updateBalance(balanceUpdateRequestDto).getBody().getData();
+
 		return accountResponseDto;
 	}
 
@@ -89,8 +95,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 	    txnList.forEach(t -> {
 
-	        AccountResponseDto accountResponseDto =
-	                accountRESTClient.getAccountByAccountId(t.getAccountId());
+	        //AccountResponseDto accountResponseDto =
+	        //        accountRESTClient.getAccountByAccountId(t.getAccountId());
+	    	
+	    	AccountResponseDto accountResponseDto =
+	    			accountFeignClient.getAccountsListByAccountId(t.getAccountId()).getBody().getData();
 
 	        allTransactions.add(
 	                TransactionMapper.toDto(t, accountResponseDto)
